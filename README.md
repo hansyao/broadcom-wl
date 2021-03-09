@@ -2,27 +2,20 @@
 
 Set of patch for Broadcom wireless adapters
 
-**Patched for Linux >= 4.15 and 5.1.2**
+**Patched for Linux >= 4.15 and 5.12.rc2**
 
-Tested on Debian Stretch with Kernel 4.15.2 and 5.1.2
-
-```bash
-$ uname -r
-4.15.2
-```
-
-or
+Tested on Fedora 33 Kernel 5.12.rc2
 
 ```bash
 $ uname -r
-5.1.2
+5.12.0-rc2
 ```
 
-With a Azureware __BCM94360HMB__ 802.11abgn/11ac WLAN + BT PCI-E Mini Card
+With a Broadcom Inc. and subsidiaries **BCM4352** 802.11ac Wireless Network Adapter (rev 03)
 
 ```bash
 $ lspci -nn | grep 14e4
-03:00.0 Network controller [0280]: Broadcom Limited BCM4360 802.11ac Wireless Network Adapter [14e4:43a0] (rev 03)
+03:00.0 Network controller [0280]: Broadcom Limited BCM4352 802.11ac Wireless Network Adapter [14e4:43b1] (rev 03)
 ```
 
 ## Compile and install
@@ -30,27 +23,8 @@ $ lspci -nn | grep 14e4
 * ### Clone/Download this repo:
 
 ```bash
-$ git clone https://github.com/fabiomartino/broadcom-wl.git
+$ git clone https://github.com/hansyao/broadcom-wl.git
 $ cd broadcom-wl/
-```
-* ### Download and untarring the proper tarball:
-Download the source code from [Broadcom Support and Downloads page][1]
-
-[1]: https://www.broadcom.com/support/download-search/?pg=&pf=Wireless+LAN+Infrastructure
-
-```bash
-$ tar xzf hybrid-v35_64-nodebug-pcoem-6_30_223_271.tar.gz
-```
-
-* ### Patch the sources:
-
-```bash
-$ patch -p1 < linux-415.patch
-```
-or 
-
-```bash
-$ patch -p1 < linux-512.patch
 ```
 
 * ### Build and Install
@@ -58,21 +32,34 @@ $ patch -p1 < linux-512.patch
 $ make clean
 $ make
 $ make install
-$ modprobe -r bcma
-$ echo "blacklist bcma" > /etc/modprobe.d/broadcom.conf
-$ echo "wl" > /etc/modules-load.d/wl.conf
-$ depmod -a
+$ depmod -A
 $ modprobe wl
+```
+
+* ### The following kernel modules are incompatible with this driver and should not be loaded:
+```bash
+ssb
+bcma
+b43
+brcmsmac
+```
+Make sure to unload (rmmod command) and blacklist those modules in order to prevent them from being automatically reloaded during the next system startup:
+
+```bash
+/etc/modprobe.d/blacklist.conf
+```
+
+* ### wireless drivers (conflict with Broadcom hybrid wireless driver 'wl')
+```bash
+blacklist ssb
+blacklist bcma
+blacklist b43
+blacklist brcmsmac
 ```
 
 ## See also
 
-* [Official README file][2] (download)
-* Arch Linux packages: [broadcom-wl][3] / [broadcom-wl-dkms][4]
-* Debian packages: [broadcom-sta][5] ([source repository][6])
+* [Official README file][1] (download)
 
-[2]: https://docs.broadcom.com/docs-and-downloads/docs/linux_sta/README_6.30.223.271.txt
-[3]: https://aur.archlinux.org/packages/broadcom-wl/
-[4]: https://www.archlinux.org/packages/community/x86_64/broadcom-wl-dkms/
-[5]: https://packages.debian.org/source/sid/broadcom-sta
-[6]: https://gitlab.com/setecastronomy/broadcom-sta/tree/debian
+
+[1]: https://docs.broadcom.com/docs-and-downloads/docs/linux_sta/README_6.30.223.271.txt
