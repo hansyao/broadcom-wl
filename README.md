@@ -36,7 +36,7 @@ $ depmod -A
 $ modprobe wl
 ```
 
-* ### The following kernel modules are incompatible with this driver and should not be loaded:
+The following kernel modules are incompatible with this driver and should not be loaded:
 ```bash
 ssb
 bcma
@@ -49,7 +49,7 @@ Make sure to unload (rmmod command) and blacklist those modules in order to prev
 /etc/modprobe.d/blacklist.conf
 ```
 
-* ### wireless drivers (conflict with Broadcom hybrid wireless driver 'wl')
+wireless drivers (conflict with Broadcom hybrid wireless driver 'wl')
 ```bash
 blacklist ssb
 blacklist bcma
