@@ -2,13 +2,13 @@
 
 Set of patch for Broadcom wireless adapters
 
-**Patched for Linux >= 4.15 and 5.12.rc2**
+**Patched for Linux >= 4.15**
 
-Tested on Fedora 33 Kernel 5.12.rc2
+Tested on Fedora 33 Kernel 5.12.rc2 - 5.15.17
 
 ```bash
 $ uname -r
-5.12.0-rc2
+5.12.0-rc2  # check your kernel version
 ```
 
 With a Broadcom Inc. and subsidiaries **BCM4352** 802.11ac Wireless Network Adapter (rev 03)
@@ -23,8 +23,11 @@ $ lspci -nn | grep 14e4
 * ### Clone/Download this repo:
 
 ```bash
-$ git clone https://github.com/hansyao/broadcom-wl.git
-$ cd broadcom-wl/
+git clone https://github.com/hansyao/broadcom-wl.git
+cd broadcom-wl/
+
+dnf -y install kernel-devel kernel-headers
+
 ```
 
 * ### Build and Install
