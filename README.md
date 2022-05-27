@@ -4,7 +4,7 @@ Set of patch for Broadcom wireless adapters
 
 **Patched for Linux >= 4.15**
 
-Tested on Fedora 33 Kernel 5.12.rc2 - 5.15.17
+Tested on Fedora 33/35 Kernel 5.12.rc2 - 5.17.9
 
 ```bash
 $ uname -r
