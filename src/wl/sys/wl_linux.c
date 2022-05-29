@@ -247,6 +247,12 @@ static const u_int8_t brcm_oui[] =  {0x00, 0x10, 0x18};
 
 #define WL_RADIOTAP_F_NONHT_VHT_BW			0x02
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0)
+static inline void eth_hw_addr_set(struct net_device *dev, const void *addr) {
+	memcpy(dev->dev_addr, addr, ETHER_ADDR_LEN);
+}
+#endif
+
 struct wl_radiotap_nonht_vht {
 	u_int8_t len;				
 	u_int8_t flags;
@@ -645,7 +651,7 @@ wl_attach(uint16 vendor, uint16 device, ulong regs,
 			WL_ERROR(("wl%d: Error setting MAC ADDRESS\n", unit));
 	}
 #endif 
-	bcopy(&wl->pub->cur_etheraddr, dev->dev_addr, ETHER_ADDR_LEN);
+	eth_hw_addr_set(dev, wl->pub->cur_etheraddr.octet);
 
 	online_cpus = 1;
 
@@ -1839,7 +1845,7 @@ wl_set_mac_address(struct net_device *dev, void *addr)
 
 	WL_LOCK(wl);
 
-	bcopy(sa->sa_data, dev->dev_addr, ETHER_ADDR_LEN);
+	eth_hw_addr_set(dev, sa->sa_data);
 	err = wlc_iovar_op(wl->wlc, "cur_etheraddr", NULL, 0, sa->sa_data, ETHER_ADDR_LEN,
 		IOV_SET, (WL_DEV_IF(dev))->wlcif);
 	WL_UNLOCK(wl);
@@ -3024,7 +3030,7 @@ _wl_add_monitor_if(wl_task_t *task)
 	else
 		dev->type = ARPHRD_IEEE80211_RADIOTAP;
 
-	bcopy(wl->dev->dev_addr, dev->dev_addr, ETHER_ADDR_LEN);
+	eth_hw_addr_set(dev, wl->dev->dev_addr);
 
 #if defined(WL_USE_NETDEV_OPS)
 	dev->netdev_ops = &wl_netdev_monitor_ops;
