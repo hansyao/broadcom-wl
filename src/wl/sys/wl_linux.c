@@ -1676,8 +1676,11 @@ wl_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
 		goto done2;
 	}
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0) && LINUX_VERSION_CODE < KERNEL_VERSION(5, 18, 0)
 	if (uaccess_kernel())
+		buf = ioc.buf;
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
+	if (true)
 		buf = ioc.buf;
 #else
 
